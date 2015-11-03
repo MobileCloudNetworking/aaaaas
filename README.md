@@ -2,7 +2,7 @@
 
 This depends upon: 
 
-* the [AAA SO](https://git.mobile-cloud-networking.eu/aaaserviceorchestrator/mcn_aaa_so/tree/master)
+* the [AAA SO](https://github.com/MobileCloudNetworking/aaaaas/bundle)
 * the MCN [SM framework](https://git.mobile-cloud-networking.eu/cloudcontroller/mcn_sm/tree/initial_sm_impl)
   * see documentation here
 
@@ -10,7 +10,7 @@ This depends upon:
 
 Get the source:
 
-    $ git clone git@git.mobile-cloud-networking.eu/m18-integrated-demo/d-aaa-sm.git --recursive
+    $ git clone git@github.com/MobileCloudNetworking/aaaaas.git --recursive
 
 ### Dependencies
 You will need to:
