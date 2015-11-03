@@ -2,7 +2,7 @@
 
 This depends upon: 
 
-* the [AAA SO](https://github.com/MobileCloudNetworking/aaaaas/bundle)
+* the [AAA SO](https://github.com/MobileCloudNetworking/aaaaas/tree/master/bundle)
 * the MCN [SM framework](https://git.mobile-cloud-networking.eu/cloudcontroller/mcn_sm/tree/initial_sm_impl)
   * see documentation here
 
