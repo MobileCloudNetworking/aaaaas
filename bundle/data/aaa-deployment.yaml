@@ -1,0 +1,172 @@
+--- 
+description: "YAML MCN AAAaaS Template"
+heat_template_version: 2013-05-23
+outputs: 
+  mcn.endpoint.aaa: 
+    description: "Endpoint for AAAaaS"
+    value: 
+      get_attr: 
+        - aaa-profile-instance_floating_ip
+        - floating_ip_address
+  mcn.endpoint.aaa-openam-instance: 
+    description: "Public IP of aaa-openam-instance."
+    value: 
+      get_attr: 
+        - aaa-openam-instance_floating_ip
+        - floating_ip_address
+  mcn.endpoint.aaa-profile-instance: 
+    description: "Public IP of aaa-profile-instance."
+    value: 
+      get_attr: 
+        - aaa-profile-instance_floating_ip
+        - floating_ip_address
+parameters: 
+  cms_dss_input: 
+    default: set_at_provisioning_time
+    description: "DSS IP Address"
+    label: "cms dss IP"
+    type: string
+  key_name: 
+    default: mcn-key
+    description: "Name of an existing EC2 KeyPair to enable SSH access to the instances"
+    type: string
+  private_net_id: 
+    default: 82c56778-da2c-4e12-834d-8d09958d0563  
+    description: "ID of private network into which servers get deployed"
+    type: string
+  private_subnet_id: 
+    default: 0e768fd0-2bbc-482c-9cbd-7469529d141f  
+    description: "ID of private sub network into which servers get deployed"
+    type: string
+  public_net_id: 
+    default: 77e659dd-f1b4-430c-ac6f-d92ec0137c85   
+    description: "ID of public network for which floating IP addresses will be allocated"
+    type: string
+resources: 
+  aaa-openam-config: 
+    properties: 
+      config: |-
+          #!/bin/bash
+          /bin/echo "127.0.0.1 localhost aaa-openam-instance aaa-openam-instance.mcn.local aaa-openam-instance.mcn.com" > /etc/hosts.new
+          /bin/cp -f /etc/hosts /etc/hosts.bak
+          /bin/mv /etc/hosts.new /etc/hosts
+      group: script
+      inputs: 
+        - 
+          name: cms_dss
+    type: "OS::Heat::SoftwareConfig"
+  aaa-openam-deployment: 
+    properties: 
+      config: 
+        get_resource: aaa-openam-config
+      input_values: 
+        cms_dss: 
+          get_param: cms_dss_input
+      server: 
+        get_resource: aaa-openam-instance
+    type: "OS::Heat::SoftwareDeployment"
+  aaa-openam-instance: 
+    properties: 
+      flavor: m1.medium
+      image: aaa-openam-ubuntu-img
+      key_name: 
+        get_param: key_name
+      name: aaa-openam-instance
+      networks: 
+        - 
+          port: 
+            Ref: aaa-openam-instance_port
+      user_data_format: SOFTWARE_CONFIG
+    type: "OS::Nova::Server"
+  aaa-openam-instance_floating_ip: 
+    properties: 
+      floating_network_id: 
+        get_param: public_net_id
+      port_id: 
+        Ref: aaa-openam-instance_port
+    type: "OS::Neutron::FloatingIP"
+  aaa-openam-instance_port: 
+    properties: 
+      fixed_ips: 
+        - 
+          subnet_id: 
+            get_param: private_subnet_id
+      network_id: 
+        get_param: private_net_id
+      security_groups: 
+        - 
+          get_resource: aaa-security-group
+    type: "OS::Neutron::Port"
+  aaa-profile-config: 
+    properties: 
+      config: |-
+          #!/bin/bash
+          /bin/echo "127.0.0.1 localhost aaa-profile-instance aaa-profile-instance.mcn.local aaa-profile-instance.mcn.com" > /etc/hosts.new
+          /bin/echo "$openam_ip aaa-openam-instance aaa-openam-instance.novalocal aaa-openam-instance.mcn.local aaa-openam-instance.mcn.com" >> /etc/hosts.new
+          /bin/cp -f /etc/hosts /etc/hosts.bak
+          /bin/mv /etc/hosts.new /etc/hosts
+      group: script
+      inputs: 
+        - 
+          name: openam_ip
+    type: "OS::Heat::SoftwareConfig"
+  aaa-profile-deployment: 
+    properties: 
+      config: 
+        get_resource: aaa-profile-config
+      input_values: 
+        openam_ip: 
+          get_attr: 
+            - aaa-openam-instance
+            - first_address
+      server: 
+        get_resource: aaa-profile-instance
+    type: "OS::Heat::SoftwareDeployment"
+  aaa-profile-instance: 
+    properties: 
+      flavor: m1.small
+      image: aaa-profile-ubuntu-img
+      key_name: 
+        get_param: key_name
+      name: aaa-profile-instance
+      networks: 
+        - 
+          port: 
+            Ref: aaa-profile-instance_port
+      user_data_format: SOFTWARE_CONFIG
+    type: "OS::Nova::Server"
+  aaa-profile-instance_floating_ip: 
+    properties: 
+      floating_network_id: 
+        get_param: public_net_id
+      port_id: 
+        Ref: aaa-profile-instance_port
+    type: "OS::Neutron::FloatingIP"
+  aaa-profile-instance_port: 
+    properties: 
+      fixed_ips: 
+        - 
+          subnet_id: 
+            get_param: private_subnet_id
+      network_id: 
+        get_param: private_net_id
+      security_groups: 
+        - 
+          get_resource: aaa-security-group
+    type: "OS::Neutron::Port"
+  aaa-security-group: 
+    properties: 
+      description: "AAAaaS security group"
+      name: aaa-security-group
+      rules: 
+        - 
+          protocol: icmp
+        - 
+          port_range_max: 65535
+          port_range_min: 1
+          protocol: tcp
+        - 
+          port_range_max: 65535
+          port_range_min: 1
+          protocol: udp
+    type: "OS::Neutron::SecurityGroup"

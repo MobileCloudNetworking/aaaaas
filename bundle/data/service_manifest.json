@@ -1,0 +1,12 @@
+{
+    "service_type": "http://schemas.mobile-cloud-networking.eu/occi/sm#aaa",
+    "service_description": "MCN AAA Service",
+    "service_attributes": {
+        "mcn.endpoint.aaa": "immutable",
+        "mcn.endpoint.dssaas": "",
+        "mcn.endpoint.api": ""
+    },
+    "service_endpoint": "http://aaa.cloudcomplab.ch:8897/aaa/",
+    "depends_on": [
+    ]
+}
