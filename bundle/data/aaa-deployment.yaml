@@ -160,7 +160,43 @@ resources:
       name: aaa-security-group
       rules: 
         - 
-          port_range_max: 8080
-          port_range_min: 8080
+          port_range_max: -1
+          port_range_min: -1
+          protocol: icmp
+          remote_ip_prefix: 193.175.132.0/22
+        - 
+          port_range_max: -1
+          port_range_min: -1
+          protocol: icmp
+          remote_ip_prefix: 195.37.76.0/22
+        - 
+          port_range_max: 65535
+          port_range_min: 1
           protocol: tcp
+          remote_ip_prefix: 194.95.175.0/24
+        - 
+          port_range_max: -1
+          port_range_min: -1
+          protocol: icmp
+          remote_ip_prefix: 194.95.175.0/24
+        - 
+          port_range_max: 65535
+          port_range_min: 1
+          protocol: tcp
+          remote_ip_prefix: 130.92.70.128/25
+        - 
+          port_range_max: -1
+          port_range_min: -1
+          protocol: icmp
+          remote_ip_prefix: 194.95.171.0/22
+        - 
+          port_range_max: 65535
+          port_range_min: 1
+          protocol: tcp
+          remote_ip_prefix: 160.85.4.0/24
+        - 
+          port_range_max: 65535
+          port_range_min: 1
+          protocol: tcp
+          remote_ip_prefix: 130.92.65.0/24
     type: "OS::Neutron::SecurityGroup"
