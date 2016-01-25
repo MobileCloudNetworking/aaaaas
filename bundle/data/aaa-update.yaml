@@ -31,15 +31,15 @@ parameters:
     description: "Name of an existing EC2 KeyPair to enable SSH access to the instances"
     type: string
   private_net_id: 
-    default: 82c56778-da2c-4e12-834d-8d09958d0563 
+    default: 18899033-33f3-4446-bff9-d2e0c93e3482 
     description: "ID of private network into which servers get deployed"
     type: string
   private_subnet_id: 
-    default: 0e768fd0-2bbc-482c-9cbd-7469529d141f 
+    default: 6a0fd5ce-3e9c-4ab2-8878-6192e3bc22fe 
     description: "ID of private sub network into which servers get deployed"
     type: string
   public_net_id: 
-    default: 77e659dd-f1b4-430c-ac6f-d92ec0137c85 
+    default: af0a7405-6d57-4971-a18c-dde9a556aa7c 
     description: "ID of public network for which floating IP addresses will be allocated"
     type: string
 resources: 
@@ -161,13 +161,7 @@ resources:
       name: aaa-security-group
       rules: 
         - 
-          protocol: icmp
-        - 
-          port_range_max: 65535
-          port_range_min: 1
+          port_range_max: 8080
+          port_range_min: 8080
           protocol: tcp
-        - 
-          port_range_max: 65535
-          port_range_min: 1
-          protocol: udp
     type: "OS::Neutron::SecurityGroup"
