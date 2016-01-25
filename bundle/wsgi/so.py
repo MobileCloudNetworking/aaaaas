@@ -39,7 +39,7 @@ class SOE(service_orchestrator.Execution):
         super(SOE, self).__init__(token, tenant)
         self.stack_id = None
         self.dss_endpoint = None
-        region_name = 'RegionOne'
+        region_name = 'UBern'
 
         #start DNSaaS support
         self.ready_event = ready_event
